@@ -1,0 +1,212 @@
+Couchbase ID prefixes
+- dc:: DiveCenter
+- person:: Person
+- ac:: Activity
+- ap:: ActivityPanel
+- dc:: DashboardSection
+-
+
+App State:
+  User: the logged in account
+  Dive Centers: - all divecenters the user can edit or view
+  Staff: - all the staff of the above dive centers
+  Activity Panels: - all activity panels of the above dive centers
+  Dashboard sections: all the dashboard sections of the above dive centers and the user (if any)
+
+  Repositories:
+    - load data to/from backend services (CRUD api)
+    - implement a key-value hashmap for easy referencing of members
+      (caching)
+    - implement a state variable for the controllers to listen to
+
+    Dive Centers
+    Staff
+    Activity Panels
+    Dashboard Sections
+
+  Controllers:
+    - hold the structured state for the views to consume
+    - expose methods for the views to change state
+    - update the repositories when significant changes occur
+
+TODO:
+  Account create, edit field:
+    Customers - accounts that have unique id's therefore login is not supported (they can't use the app)
+    Staff - accounts that use the email address as id, it's global throughout all the dive centers
+
+    - basic info
+    - Documents
+    - Certifications
+    - History section in the profile page
+
+  Activity Panel:
+
+    -- Manage panels
+
+
+  Activities:
+
+
+
+  Dashboard:
+
+
+  use bloc for state management:
+    - refactor Login page, Dive Center pages
+
+  Hive:
+    - page to manage raw data  (for mock content)
+    - models should implement save(), get() method to load and save to the relevant box
+
+
+
+
+Dive center:
+  Export data: Settings, activities, activity boards, users
+  Delete: Settings, activities, activity boards
+
+Users:
+  Delete: what should happen with the dive bases and activities?
+
+
+DiveCenter - Account relationship:
+  Get all users for a given dive center: "http://192.168.43.145:5984/divemanager/_design/activity_center/_view/staff?key={$dive_center}"
+  Get all divecenters for a given user
+
+
+Add existing users to dive center:
+  Online:
+    1) Administrator adds the user to the dive center and sets up a password to activate it
+    2) The user inputs the password and activates his account
+    3) The administrator reviews the accounts, and activates it
+  Offline:
+    Show all the users from the database
+
+Compact database:
+  Delete stale values:
+    Accounts: diveCenterRoles - delete dive centers and or dive center roles that don't exist anymore
+
+
+Activities:
+  archived activities: no modifications allowed, requires management level permissions to set/unset
+
+
+BUGS:
+  Dive Center:
+    Issue1: When selecting a new logo the last modified field resets to its previous state.
+      Solutions: switch image picker library, or force the form to save its state)
+
+    Issue2: 1
+      Solutions:
+
+
+Feature Matrix:
+                                Basic        Adv         Pro           Custom
+  No. Centers               |     1     |     2      |     2     |     unlimited
+  No. Staff                 |     3     |     5      |    15     |      15
+  No. Attachments           |     1     |     3      |     5     |      10
+  Attachment Size (kb)      |   250     |   500      |   500     |     500
+  Activity Panels           |     4     |     7      |    15     |  unlimited
+  Features                  |           |            |           |
+    - Analytics             |     X     |  Basic     |  Adv.     |    Expert
+    - Validate dive         |     X     |     X      |    Y      |      Y
+      activities            |           |            |           |
+      (PADI, SSI, NAUI      |           |            |           |
+      stardards)            |           |            |           |
+    - Offline               |    Y      |     Y      |    Y      |      Y
+      Online                |    N      |     Y      |    Y      |      Y
+    - Support               | Community |   Email    |  Phone    |   Personalized
+  -----------------------------------------------------------------------------------
+    Customers/month (avg)        500           750         1500          2500
+    Customers/year (avg)        6000          9000        18000         30000
+    Customers/month (max)        750          1200         2500          3600
+    Customer/year (max)         9000         14500        30000         43000
+    Customer DB size/year     5-10MB       10-15MB      15-30MB          45MB
+
+    Activities avg size          500b
+    Activities/month (avg)       1500         3000         7500         12500
+    Activities/year (avg)       18000        36000        90000        150000
+    Activities DB size/year      10MB         20MB         50MB          75MB
+
+    Database Size/year           20MB         40MB         80MB        120MB *not including metadata
+    Database Size/year           50MB        100MB        200MB        500MB
+
+
+
+    Target - 2021                 50           10           5              2    Storage: 6GB
+    Target - 2022                150           30          10              3    Storage: 13GB
+    Target - 2023                300          100          50              4    Storage: 24GB
+                                              20$         30$           40$/dc     Storage: 50GB (by the end of 2023)
+
+
+
+
+    Price                   |   Free    |   10 $/m   |   50$    |     200$
+                                          (15$/dc/m) |
+
+
+
+  Target
+      1st year              |    50     |    10      |     5     |       1          |     1000$
+      2nd year              |   150     |    20      |     5     |       3          |     2100$
+      3                     |   300     |    30      |    10     |       5          |     3500$
+
+
+      1MB/100dc
+      1MB/1000cu
+      1MB/2000ac
+
+
+192.168.43.74
+
+
+Dive groups validation rules:
+  - "Certified divers" = Discover Local Diving
+  Ratios: define rule for a course or course module
+  Age: define rules for a course or course module
+  Conflicts: define two courses that conflict with each other (for example AOW Deep vs OW, AOW NAV vs DLD, DSD vs DLD)
+
+
+
+
+Issues:
+  - Authetication:
+    * Google Sign In
+    * App Sign In
+    * Server authentication
+          - with Oauth2 accessToken retrieve user name (or user ID)
+          - and create/return user document from Couchbase
+          - return the list of the dive centers the user has activities or is staff of
+              a) all the dive centers the user is owner of = [id_of_center, docs::id_of_center]
+              b) all divecenters the user is staff of = [id_of_center, docs::id_of_center]
+              c) divecenters the user has activities for, but not staff (ie Customer) = [id_of_center]
+
+  - Replication:
+    - channels
+       - each divecenter will have two channels
+            1) the channel to replicate the document [id_of_center]
+            2) a channel for all related documents [docs::id_of_center]
+       - users will have one channel [id_of_user] - their activities belong to this
+
+  - Subscriptions:
+   * In-App subscription
+      Subscription plans:
+        1) Basic - 1 "remote" divecenter
+        2) Advanced - 3 "remote" divecenter
+        3) Pro - 5 "remote" divecenters
+        4) Enterprise - Unlimited "remote" divecenters
+
+      - plans control how many dive centers can be created
+      - how many can be made
+
+ Use case 1:
+  - User subscribes to Advanced plan, creates 2 remote dive centers.
+  - User downgrades to basic
+        Result: Ask which dive center backup should be cancelled.
+        The documents for that dive center will not be replicated anymore by any of the deviced.
+        (Making changes in different devices will cause the data to diverge)
+
+Use case 2:
+  - User subscribes to any plan, creates the amount of remote dive centers he wants
+  - User cancels the plan
+        Result: all dive centers stop being "remote". The user can use them without further replication. Data is kept on the server
