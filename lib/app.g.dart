@@ -31,21 +31,6 @@ mixin _$App on AppBase, Store {
     });
   }
 
-  final _$replicatorStateAtom = Atom(name: 'AppBase.replicatorState');
-
-  @override
-  ReplicatorStatus get replicatorState {
-    _$replicatorStateAtom.reportRead();
-    return super.replicatorState;
-  }
-
-  @override
-  set replicatorState(ReplicatorStatus value) {
-    _$replicatorStateAtom.reportWrite(value, super.replicatorState, () {
-      super.replicatorState = value;
-    });
-  }
-
   final _$databaseChangedAtom = Atom(name: 'AppBase.databaseChanged');
 
   @override
@@ -200,7 +185,6 @@ mixin _$App on AppBase, Store {
   String toString() {
     return '''
 appDocPath: ${appDocPath},
-replicatorState: ${replicatorState},
 databaseChanged: ${databaseChanged},
 backendType: ${backendType},
 backendUrl: ${backendUrl},

@@ -1,10 +1,6 @@
-import 'dart:io';
-
 import 'package:dio/dio.dart';
-import 'package:herogame/services/database/couchbase.dart';
 import 'package:herogame/services/router/router.dart';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:cookie_jar/cookie_jar.dart';
 import 'app.dart';
@@ -20,7 +16,7 @@ void main() async {
 
   // Directory appDocDir = await getApplicationDocumentsDirectory();
   // Cbl.init();
-  final app = App(localDB: null);
+  final app = App();
 
   final router = AppRouter(app);
 

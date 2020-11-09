@@ -2,9 +2,7 @@ import 'dart:io';
 
 import 'package:herogame/app.dart';
 import 'package:herogame/views/widgets/notifications.dart';
-import 'package:couchbase_lite_dart/couchbase_lite_dart.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
 
 class CommonScaffold extends StatelessWidget {
   final App app;
@@ -39,39 +37,6 @@ class CommonScaffold extends StatelessWidget {
             appBar: AppBar(
               title: title ?? SizedBox.shrink(),
               actions: [
-                Observer(builder: (BuildContext context) {
-                  var icon = Icons.cloud;
-                  var activity = app?.replicatorState?.activityLevel;
-                  switch (activity) {
-                    case ActivityLevel.connecting:
-                    case ActivityLevel.busy:
-                      icon = Icons.cloud_upload;
-                      break;
-                    case ActivityLevel.idle:
-                      icon = Icons.cloud_queue;
-                      break;
-                    case ActivityLevel.offline:
-                      icon = Icons.cloud_off;
-                      break;
-                    case ActivityLevel.stopped:
-                      icon = Icons.cloud_off;
-                      break;
-                    default:
-                      icon = Icons.cloud_off;
-                  }
-                  return IconButton(
-                      icon: Icon(icon),
-                      onPressed: () {
-                        if (app == null) return;
-                        if (app.replicatorState.activityLevel ==
-                            ActivityLevel.stopped)
-                          app.localDB.replicator.start();
-
-                        if (app.replicatorState.activityLevel !=
-                            ActivityLevel.stopped)
-                          app.localDB.replicator.stop();
-                      });
-                }),
                 Builder(
                   builder: (context) => IconButton(
                     icon: Icon(Icons.refresh),

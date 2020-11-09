@@ -170,6 +170,17 @@ mixin _$Battle on BattleBase, Store {
   }
 
   @override
+  dynamic flee() {
+    final _$actionInfo =
+        _$BattleBaseActionController.startAction(name: 'BattleBase.flee');
+    try {
+      return super.flee();
+    } finally {
+      _$BattleBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   String toString() {
     return '''
 player1: ${player1},
