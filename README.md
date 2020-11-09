@@ -9,13 +9,13 @@ The game has two modes: local and remote.
 
 ## Configuration for the local engine
 
-* Characters
+* **Characters**
     - name
     - description
     - skills
     - stats: Health, Strength, Defence, Speed, Luck - an array of the form [min, max]
 
-* Monsters
+* **Monsters**
     - same as characters
 
 * **Skills**
@@ -26,3 +26,17 @@ The game has two modes: local and remote.
     - **fractionalModifier:** multiplier applied to `stat`.
     - **valueModifier:** this value is added to `stat`. Can be negative or positive.
     - New value equation: (`value` * `fractionalModifier`) + `valueModifier`
+
+## Game Mechanics
+* Player selects a character he or she wishes to play
+* Before each battle the player stats are reset to a random value between the character's stat range and a random monster is choosen, also with random stats within their range.
+* Battle consists of `battle rounds` with one attacker and one defender.
+* The player with the greater `speed` and `luck` starts the first round. If both speed and luck are the same, the first player is choosen randomly. 
+* Monsters attack automatically, including if they are the first attacker (ambush)
+* The battle ends when one player's `health` reaches 0, or at 40 rounds (20 full turns).
+* The player with the most `health` health is declared the winner.
+* The actions a human player can take are `Attack`, `Quickfight`, `Flee`, `Continue`
+    - `Attack` - performs one attack round on the opponents. If the opponents is a `monster`, it will counterattack (creating a second battle round)
+    - `Quickfight` - the battle is resolved automatically
+    - `Flee` - battle is completed instantly. No more attacks can be performed.
+    - `Continue` - when a battle is complete (either through natural means, or by fleeing), the player can start a new battle
